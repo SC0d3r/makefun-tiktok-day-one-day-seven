@@ -3,10 +3,13 @@ set -euo pipefail
 cd "$(dirname "$0")"
 
 echo "=== stage 1: render game frames ==="
-python3 game.py
-
-echo "=== stage 2: synthesize beat ==="
-python3 beat.py
+if [ "${SKIP_RENDER:-0}" != "1" ]; then
+  python3 game.py
+  echo "=== stage 2: synthesize beat ==="
+  python3 beat.py
+else
+  echo "SKIP_RENDER=1: reusing existing game.mp4 and beat.wav"
+fi
 
 echo "=== stage 3: write referral code subtitles ==="
 cat > code.ass <<'ASS'
@@ -19,18 +22,18 @@ ScaledBorderAndShadow: yes
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Code,JetBrains Mono,62,&H00191419,&H00191419,&H00191419,&H00000000,-1,0,0,0,100,100,0,0,1,0,0,7,0,0,0,1
+Style: Code,JetBrains Mono,66,&H00191419,&H00191419,&H00191419,&H00000000,-1,0,0,0,100,100,0,0,1,0,0,7,0,0,0,1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
-Dialogue: 0,0:00:15.43,0:00:15.55,Code,,0,0,0,,{\an7\pos(210,1232)}n
-Dialogue: 0,0:00:15.55,0:00:15.67,Code,,0,0,0,,{\an7\pos(210,1232)}n0
-Dialogue: 0,0:00:15.67,0:00:15.79,Code,,0,0,0,,{\an7\pos(210,1232)}n0y
-Dialogue: 0,0:00:15.79,0:00:15.91,Code,,0,0,0,,{\an7\pos(210,1232)}n0yk
-Dialogue: 0,0:00:15.91,0:00:16.03,Code,,0,0,0,,{\an7\pos(210,1232)}n0yk8
-Dialogue: 0,0:00:16.03,0:00:16.15,Code,,0,0,0,,{\an7\pos(210,1232)}n0yk8x
-Dialogue: 0,0:00:16.15,0:00:16.27,Code,,0,0,0,,{\an7\pos(210,1232)}n0yk8xz
-Dialogue: 0,0:00:16.27,0:00:16.50,Code,,0,0,0,,{\an7\pos(210,1232)}n0yk8xz9
+Dialogue: 0,0:00:14.75,0:00:14.85,Code,,0,0,0,,{\an7\pos(228,1232)}n
+Dialogue: 0,0:00:14.85,0:00:14.95,Code,,0,0,0,,{\an7\pos(228,1232)}n0
+Dialogue: 0,0:00:14.95,0:00:15.05,Code,,0,0,0,,{\an7\pos(228,1232)}n0y
+Dialogue: 0,0:00:15.05,0:00:15.15,Code,,0,0,0,,{\an7\pos(228,1232)}n0yk
+Dialogue: 0,0:00:15.15,0:00:15.25,Code,,0,0,0,,{\an7\pos(228,1232)}n0yk8
+Dialogue: 0,0:00:15.25,0:00:15.35,Code,,0,0,0,,{\an7\pos(228,1232)}n0yk8x
+Dialogue: 0,0:00:15.35,0:00:15.45,Code,,0,0,0,,{\an7\pos(228,1232)}n0yk8xz
+Dialogue: 0,0:00:15.45,0:00:16.50,Code,,0,0,0,,{\an7\pos(228,1232)}n0yk8xz9
 ASS
 
 echo "=== stage 4: composite video, card, code and audio ==="
